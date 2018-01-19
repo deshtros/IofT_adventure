@@ -1,25 +1,27 @@
 #include <ESP8266WiFi.h>
 
-#include "./includes/ChangeMac/ChangeMac.hpp"
+extern "C" {
+  #include "user_interface.h"
+}
 
 // Change SSID and PASSWORD
-
-const char* ssid = "Epicerie";
-const char* password = "c0u5-c0u5";
+const char* ssid = "iPhone de 2Pat";
+const char* password = "11111111";
 
 int ledPin = 2; // GPIO2
 
 WiFiServer server(80);
 
+void initVariant() {
+  uint8_t mac[] = {0xDE, 0xAD, 0xBE, 0x03, 0x04, 0x05};
+
+  wifi_set_macaddr(STATION_IF, &mac[0]);
+}
+
 void setup() {
   // Setup serial-output
   Serial.begin(115200);
   delay(10);
-
-  uint8_t mac[6];
-
-  makeRandomMac(mac);
-  changeMac(mac);
 
   WiFi.mode(WIFI_STA);
 
