@@ -1,5 +1,7 @@
 #include <ESP8266WiFi.h>
 
+#include "./includes/ChangeMac/ChangeMac.hpp"
+
 // Change SSID and PASSWORD
 
 const char* ssid = "Epicerie";
@@ -13,6 +15,11 @@ void setup() {
   // Setup serial-output
   Serial.begin(115200);
   delay(10);
+
+  uint8_t mac[6];
+
+  makeRandomMac(mac);
+  changeMac(mac);
 
   WiFi.mode(WIFI_STA);
 
@@ -103,4 +110,3 @@ void loop() {
   Serial.println("Client disonnected");
   Serial.println("");
 }
-
