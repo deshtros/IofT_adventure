@@ -8,7 +8,7 @@ extern "C" {
 const char* ssid = "iPhone de 2Pat";
 const char* password = "11111111";
 
-int ledPin = 2; // GPIO2
+int doorPin = 2; // GPIO2
 
 WiFiServer server(80);
 
@@ -26,8 +26,8 @@ void setup() {
   WiFi.mode(WIFI_STA);
 
   // Pin 2 has an integrated LED - configure it, and turn it off
-  pinMode(ledPin, OUTPUT);
-  digitalWrite(ledPin, LOW);
+  pinMode(doorPin, OUTPUT);
+  digitalWrite(doorPin, LOW);
 
   // Connect to WiFi network
   Serial.println();
@@ -80,32 +80,38 @@ void loop() {
 
   // Match the request
   int value = LOW;
-  if (request.indexOf("/LED=ON") != -1) {
-    digitalWrite(ledPin, HIGH);
+  if (request.indexOf("/door/open") != -1) {
+    digitalWrite(doorPin, HIGH);
     value = HIGH;
   }
-  if (request.indexOf("/LED=OFF") != -1) {
-    digitalWrite(ledPin, LOW);
+  if (request.indexOf("/door/close") != -1) {
+    digitalWrite(doorPin, LOW);
     value = LOW;
   }
 
   // Return the response
   client.println("HTTP/1.1 200 OK");
+  client.println("Access-Control-Allow-Origin: *");
+  client.println("Access-Control-Allow-Headers: content-type, cache-control");
+  client.println("cache-control: no-cache");
+  client.println(""); // do not forget this one
+  client.println("HTTP/1.1 200 OK");
+  client.println("Access-Control-Allow-Origin: *");
+  client.println("cache-control: no-cache");
   client.println("Content-Type: text/html");
+  client.println("Connection: close");
   client.println(""); // do not forget this one
   client.println("<!DOCTYPE HTML>");
   client.println("<html>");
 
-  client.print("Led pin is now: ");
-
   if(value == HIGH) {
-    client.print("On");
+    client.println("Open");
   } else {
-    client.print("Off");
+    client.println("Close");
   }
   client.println("<br><br>");
-  client.println("Click <a href=\"/LED=ON\">here</a> turn the LED on pin 2 ON<br>");
-  client.println("Click <a href=\"/LED=OFF\">here</a> turn the LED on pin 2 OFF<br>");
+  client.println("Click <a href=\"/door/open\">here</a> to OPEN the door<br>");
+  client.println("Click <a href=\"/door/close\">here</a> to CLOSE the door<br>");
   client.println("</html>");
 
   delay(1);
